@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Diabetes Risk Check{% endblock %}
+
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <h1>Your progress</h1>
+    <p class="lede" id="dashLede">Every check you save shows up here.</p>
+  </div>
+
+  <div id="dashEmpty" class="empty" hidden>
+    <h2>No checks saved yet</h2>
+    <p>Run your first check and it will appear here, with a chart of how your numbers change.</p>
+    <a class="btn btn-primary" href="{{ url_for('index') }}">Check my risk</a>
+  </div>
+
+  <div id="dashContent" class="stagger" hidden>
+    <dl class="stats" style="--i:0">
+      <div><dt>Checks saved</dt><dd id="statCount">—</dd></div>
+      <div><dt>Latest risk score</dt><dd id="statRisk">—</dd></div>
+      <div><dt>Change since first check</dt><dd id="statChange">—</dd></div>
+      <div><dt>Latest health score</dt><dd id="statScore">—</dd></div>
+    </dl>
+
+    <section class="section" style="--i:1" aria-labelledby="h-trend">
+      <div class="section-row">
+        <h2 id="h-trend">Over time</h2>
+        <div class="legend">
+          <span><i class="key key-risk"></i> Risk score (lower is better)</span>
+          <span><i class="key key-health"></i> Health score (higher is better)</span>
+        </div>
+      </div>
+      <div class="chart" id="trendChart" role="img" aria-label="Line chart of risk score and health score across your saved checks"></div>
+      <div class="chart-tip" id="chartTip" hidden></div>
+    </section>
+
+    <section class="section" style="--i:2" aria-labelledby="h-history">
+      <h2 id="h-history">All checks</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Risk score</th>
+              <th scope="col">Result</th>
+              <th scope="col">Health score</th>
+              <th scope="col">BMI</th>
+              <th scope="col">Glucose</th>
+              <th scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

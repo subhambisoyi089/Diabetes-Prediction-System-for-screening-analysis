@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Models & Datasets · Diabetes Risk Check{% endblock %}
+
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <h1>Clinical models &amp; datasets</h1>
+    <p class="lede">Trained on diverse male and female cohorts with 5-fold stratified cross-validation. The highest-performing model powers your live check.</p>
+  </div>
+
+  <!-- Dataset information card -->
+  <div class="dataset-card section" id="datasetCard">
+    <div class="dataset-card-header">
+      <div class="dataset-badge">
+        <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2Zm.75 11.25h-1.5v-5h1.5v5Zm0-6.5h-1.5V5.25h1.5V6.75Z"/></svg>
+        <span id="dsCohortName">Multi-Cohort Clinical Dataset</span>
+      </div>
+      <span class="dataset-tag" id="dsStatus">Active in production</span>
+    </div>
+    <div class="dataset-stats-grid">
+      <div class="ds-stat">
+        <span class="ds-stat-label">Total Records</span>
+        <span class="ds-stat-val" id="dsTotal">—</span>
+      </div>
+      <div class="ds-stat">
+        <span class="ds-stat-label">Male Patients</span>
+        <span class="ds-stat-val" id="dsMales">—</span>
+      </div>
+      <div class="ds-stat">
+        <span class="ds-stat-label">Female Patients</span>
+        <span class="ds-stat-val" id="dsFemales">—</span>
+      </div>
+      <div class="ds-stat">
+        <span class="ds-stat-label">Diabetic Cases</span>
+        <span class="ds-stat-val" id="dsDiabetic">—</span>
+      </div>
+    </div>
+    <p class="dataset-note" id="dsDescription">
+      Combines real-world clinical records from female and male patients. For male patients, biological pregnancy count is locked to 0, with calibrated metabolic and cardiovascular baseline weighting.
+    </p>
+  </div>
+
+  <section class="section" aria-labelledby="h-table">
+    <h2 id="h-table">Scores on held-out test data (20%)</h2>
+    <p class="section-hint" id="modelNote">Loading results…</p>
+    <div class="table-wrap">
+      <table class="table models-table">
+        <thead>
+          <tr>
+            <th scope="col">Model</th>
+            <th scope="col">Accuracy</th>
+            <th scope="col">Male Acc</th>
+            <th scope="col">Female Acc</th>
+            <th scope="col">Recall</th>
+            <th scope="col">ROC-AUC</th>
+            <th scope="col">CV ROC-AUC (5-fold)</th>
+          </tr>
+        </thead>
+        <tbody id="modelTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-bars">
+    <h2 id="h-bars">Model accuracy comparison</h2>
+    <div class="model-bars" id="modelBars"></div>
+  </section>
+
+  <section class="section method" aria-labelledby="h-method">
+    <h2 id="h-method">Methodology &amp; Clinical Fairness</h2>
+    <ul class="plain-list">
+      <li><strong>Diverse Representation:</strong> Features both male and female patients to avoid single-demographic bias (addressing the historical limitation of female-only cohorts).</li>
+      <li><strong>Male Patients Pregnancies:</strong> Biological males are fixed to 0 pregnancies, avoiding imputation artifacts and maintaining clinical physiological validity.</li>
+      <li><strong>Leakage-free Pipeline:</strong> Impossible zeros in lab values (glucose, blood pressure, BMI) are treated as missing and imputed via KNN fitted strictly on training folds.</li>
+      <li><strong>Class Imbalance:</strong> Balanced weights are applied across classes to prevent models from skewing toward majority non-diabetic cases.</li>
+      <li><strong>5-Fold Cross-Validation:</strong> Guarantees that performance is statistically reproducible and not the product of an advantageous random split.</li>
+    </ul>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/models.js') }}"></script>
+{% endblock %}

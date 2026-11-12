@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+{% block title %}Check your risk · Diabetes Risk Check{% endblock %}
+
+{% block content %}
+<div class="wrap">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       INFO BANNER — dataset, cloud, doctor-report highlights
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="info-banner" id="infoBanner" aria-label="About this tool">
+    <div class="info-banner-inner">
+      <div class="info-badge">
+        <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2Zm.75 11.25h-1.5v-5h1.5v5Zm0-6.5h-1.5V5.25h1.5V6.75Z"/></svg>
+        <span>Now supports male &amp; female patients</span>
+      </div>
+      <div class="info-badge">
+        <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 1 L12.9 7 L20 7.6 L15 12 L16.6 19 L10 15.4 L3.4 19 L5 12 L0 7.6 L7.1 7 Z"/></svg>
+        <span>Diverse multi-source dataset (Pima + NHANES + CDC)</span>
+      </div>
+      <div class="info-badge">
+        <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M3 3h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm2 4v2h10V7H5Zm0 4v2h6v-2H5Z"/></svg>
+        <span>Doctor-friendly PDF report included</span>
+      </div>
+      <div class="info-badge">
+        <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 2C5.6 2 2 5.6 2 10s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8Zm1 12H9V9h2v5Zm0-6H9V6h2v2Z"/></svg>
+        <span>Cloud-ready · works on any device</span>
+      </div>
+    </div>
+    <button class="info-banner-close" id="infoBannerClose" aria-label="Dismiss" title="Dismiss">×</button>
+  </div>
+
+  <div class="page-head">
+    <h1>Check your diabetes risk</h1>
+    <p class="lede">Answer a few questions. You get a risk score, the reasons behind it, and a doctor-ready report.</p>
+  </div>
+
+  <div class="check">
+    <form id="riskForm" class="intake stagger" novalidate>
+
+      <!-- ─── Section 1: About you ─────────────────────────── -->
+      <section class="section stagger-0" aria-labelledby="h-body">
+        <h2 id="h-body">About you</h2>
+
+        <!-- Gender selector -->
+        <div class="gender-row" role="group" aria-labelledby="gender-label">
+          <span id="gender-label" class="field-label">Biological sex</span>
+          <div class="gender-chips">
+            <label class="gender-chip">
+              <input type="radio" name="gender" id="gender_female" value="female" checked>
+              <span class="gender-chip-inner">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 12v8M9 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                Female
+              </span>
+            </label>
+            <label class="gender-chip">
+              <input type="radio" name="gender" id="gender_male" value="male">
+              <span class="gender-chip-inner">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 10l4-4m0 0h-3m3 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                Male
+              </span>
+            </label>
+            <label class="gender-chip">
+              <input type="radio" name="gender" id="gender_other" value="other">
+              <span class="gender-chip-inner">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M6 10l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+                Other
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Height & Weight with live metric/imperial converters -->
+        <div class="grid-2">
+          <div class="field">
+            <div class="height-label-row">
+              <label for="height_cm">Height</label>
+              <div class="unit-toggle" role="group" aria-label="Height unit">
+                <button type="button" class="unit-btn unit-btn-active" id="btnCm" data-unit="cm">cm</button>
+                <button type="button" class="unit-btn" id="btnFt" data-unit="ft">ft/in</button>
+              </div>
+            </div>
+            <!-- cm input -->
+            <div class="input-unit" id="cmInputWrap">
+              <input id="height_cm" type="number" inputmode="decimal" min="100" max="250" step="0.1" placeholder="165">
+              <span>cm</span>
+            </div>
+            <!-- ft/in input panel -->
+            <div class="ftIn-row" id="ftInPanel" hidden>
+              <div class="input-unit ftIn-ft">
+                <input id="height_ft" type="number" inputmode="numeric" min="3" max="8" step="1" placeholder="5">
+                <span>ft</span>
+              </div>
+              <div class="input-unit ftIn-in">
+                <input id="height_in" type="number" inputmode="decimal" min="0" max="11" step="0.5" placeholder="5">
+                <span>in</span>
+              </div>
+            </div>
+            <p class="hint" id="heightConvertHint"></p>
+          </div>
+
+          <div class="field">
+            <div class="height-label-row">
+              <label for="weight_kg">Weight</label>
+              <div class="unit-toggle" role="group" aria-label="Weight unit">
+                <button type="button" class="unit-btn unit-btn-active" id="btnKg" data-unit="kg">kg</button>
+                <button type="button" class="unit-btn" id="btnLbs" data-unit="lbs">lbs</button>
+              </div>
+            </div>
+            <!-- kg input -->
+            <div class="input-unit" id="kgInputWrap">
+              <input id="weight_kg" type="number" inputmode="decimal" min="20" max="300" step="0.1" placeholder="62">
+              <span>kg</span>
+            </div>
+            <!-- lbs input -->
+            <div class="input-unit" id="lbsInputWrap" hidden>
+              <input id="weight_lbs" type="number" inputmode="decimal" min="44" max="660" step="0.1" placeholder="136">
+              <span>lbs</span>
+            </div>
+            <p class="hint" id="weightConvertHint"></p>
+          </div>
+        </div>
+        <p class="bmi-line" id="bmiLine" aria-live="polite">Enter height and weight to see your BMI.</p>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="age">Age</label>
+            <div class="input-unit"><input id="age" type="number" inputmode="numeric" min="18" max="100" step="1" placeholder="35"><span>years</span></div>
+          </div>
+          <div class="field" id="pregnancyField">
+            <label for="pregnancies">Pregnancies</label>
+            <input id="pregnancies" type="number" inputmode="numeric" min="0" max="20" step="1" value="0">
+            <p class="hint" id="pregnancyHint">Enter 0 if this doesn't apply.</p>
+          </div>
+        </div>
+
+        <!-- Male pregnancy notice (hidden by default, shown when Male selected) -->
+        <div class="gender-notice" id="maleNotice" hidden role="status" aria-live="polite">
+          <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2Zm.75 11.25h-1.5v-5h1.5v5Zm0-6.5h-1.5V5.25h1.5V6.75Z"/></svg>
+          <span>Pregnancies don't apply to male patients — set to 0 automatically. The model adjusts risk scoring accordingly.</span>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="family_history">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>A parent or sibling has diabetes</span>
+        </label>
+      </section>
+
+      <!-- ─── Section 2: Lifestyle ──────────────────────────── -->
+      <section class="section stagger-1" aria-labelledby="h-life">
+        <h2 id="h-life">Your lifestyle</h2>
+        <p class="section-hint">Slide to the answer that fits your usual week.</p>
+
+        <div class="slider">
+          <div class="slider-head"><label for="sugar_diet">Sugar in your diet</label><output class="slider-value" for="sugar_diet">5</output></div>
+          <input id="sugar_diet" type="range" min="1" max="10" step="1" value="5">
+          <div class="slider-ends"><span>Very little</span><span>A lot</span></div>
+        </div>
+        <div class="slider">
+          <div class="slider-head"><label for="activity">Physical activity</label><output class="slider-value" for="activity">5</output></div>
+          <input id="activity" type="range" min="1" max="10" step="1" value="5">
+          <div class="slider-ends"><span>Rarely</span><span>Most days</span></div>
+        </div>
+        <div class="slider">
+          <div class="slider-head"><label for="stress">Stress</label><output class="slider-value" for="stress">5</output></div>
+          <input id="stress" type="range" min="1" max="10" step="1" value="5">
+          <div class="slider-ends"><span>Calm</span><span>Constant</span></div>
+        </div>
+        <div class="slider">
+          <div class="slider-head"><label for="salt_intake">Salt in your diet</label><output class="slider-value" for="salt_intake">5</output></div>
+          <input id="salt_intake" type="range" min="1" max="10" step="1" value="5">
+          <div class="slider-ends"><span>Very little</span><span>A lot</span></div>
+        </div>
+
+        <dl class="estimates" aria-live="polite">
+          <div><dt>Estimated glucose</dt><dd id="estGlucose">—</dd></div>
+          <div><dt>Estimated blood pressure</dt><dd id="estBP">—</dd></div>
+        </dl>
+        <p class="hint">Estimated from your age, family history and lifestyle answers.</p>
+      </section>
+
+      <!-- ─── Section 3: Lab readings ──────────────────────── -->
+      <section class="section stagger-2" aria-labelledby="h-lab">
+        <h2 id="h-lab">Lab readings <span class="optional">optional</span></h2>
+        <p class="section-hint">Have recent results? Adding them makes the score more accurate. Anything you leave blank is estimated by the model.</p>
+
+        <label class="switch">
+          <input type="checkbox" id="use_own_readings">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Use my own glucose and blood pressure</span>
+        </label>
+
+        <div class="grid-2 own-readings" id="ownReadings" hidden>
+          <div class="field">
+            <label for="glucose">Fasting glucose</label>
+            <div class="input-unit"><input id="glucose" type="number" inputmode="decimal" min="40" max="400" step="1" placeholder="100"><span>mg/dL</span></div>
+          </div>
+          <div class="field">
+            <label for="blood_pressure">Blood pressure (lower number)</label>
+            <div class="input-unit"><input id="blood_pressure" type="number" inputmode="decimal" min="30" max="200" step="1" placeholder="80"><span>mmHg</span></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="insulin">Insulin</label>
+            <div class="input-unit"><input id="insulin" type="number" inputmode="decimal" min="0" max="900" step="1" placeholder="Not sure"><span>µU/mL</span></div>
+          </div>
+          <div class="field">
+            <label for="skin_thickness">Skin-fold thickness</label>
+            <div class="input-unit"><input id="skin_thickness" type="number" inputmode="decimal" min="0" max="100" step="1" placeholder="Not sure"><span>mm</span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="submit-row stagger-3">
+        <p class="form-error" id="formError" role="alert" hidden></p>
+        <button class="btn btn-primary btn-block" id="submitBtn" type="submit">
+          <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2Zm4.3 5.7-5 5a1 1 0 0 1-1.4 0l-2-2a1 1 0 0 1 1.4-1.4L9 10.6l4.3-4.3a1 1 0 0 1 1.4 1.4Z"/></svg>
+          Check my risk
+        </button>
+      </div>
+    </form>
+
+    <!-- ─── Readout panel ─────────────────────────────────── -->
+    <aside class="readout stagger" id="readout" aria-live="polite">
+      <div class="stagger-1">
+        <p class="readout-title">Your result</p>
+
+        <div class="gauge" id="gauge" data-level="none">
+          <svg viewBox="0 0 240 132" aria-hidden="true">
+            <path class="gauge-track" d="M20 120 A100 100 0 0 1 220 120" fill="none" stroke-width="16" stroke-linecap="round"/>
+            <path class="gauge-fill" id="gaugeFill" d="M20 120 A100 100 0 0 1 220 120" fill="none" stroke-width="16" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+          </svg>
+          <div class="gauge-value"><span class="gauge-number" id="riskNumber">0%</span></div>
+        </div>
+        <p class="readout-level" id="riskLabel">Not checked yet</p>
+
+        <div class="score-row">
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="ring-track" cx="50" cy="50" r="42" fill="none" stroke-width="9"/>
+              <circle class="ring-fill" id="ringFill" cx="50" cy="50" r="42" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" transform="rotate(-90 50 50)"/>
+            </svg>
+            <span class="ring-number" id="scoreNumber">0</span>
+          </div>
+          <div>
+            <div class="score-head-wrap">
+              <p class="score-title">Health score</p>
+              <span class="score-badge" id="scoreBadge" data-rating="none">Pending</span>
+            </div>
+            <p class="score-sub" id="scoreSub">Out of 100. Combines risk, BMI, glucose, BP, diet &amp; activity.</p>
+          </div>
+        </div>
+
+        <div class="readout-actions" id="readoutActions" hidden>
+          <button class="btn btn-light" id="downloadBtn" type="button">
+            <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 2a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L9 11.586V3a1 1 0 0 1 1-1ZM3 17a1 1 0 1 1 0 2h14a1 1 0 1 1 0-2H3Z"/></svg>
+            Doctor Report (PDF)
+          </button>
+          <p class="save-note">Saved to your <a href="{{ url_for('dashboard') }}">dashboard</a>.</p>
+        </div>
+
+        <p class="disclaimer">A model score combining the Pima, NHANES and CDC datasets. Not a diagnosis — share with your doctor.</p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ─── Result details: explanation + comparison ─────────── -->
+  <section class="details" id="details" hidden aria-labelledby="h-why">
+    <div class="details-col">
+      <h2 id="h-why">What drove your result</h2>
+      <p class="section-hint" id="whySummary"></p>
+      <div class="dx" id="dxChart"></div>
+      <p class="hint dx-legend"><span class="key key-up"></span> Raises your risk <span class="key key-down"></span> Lowers your risk. Values are percentage points of your score.</p>
+      <p class="hint">Each bar compares you with a typical person in the reference sample. That sample has a high average BMI and glucose, so a green bar means lower than the sample, not automatically healthy.</p>
+    </div>
+    <div class="details-col">
+      <h2>How you compare</h2>
+      <p class="section-hint">Your values next to the average of people in the dataset without and with diabetes.</p>
+      <div class="cmp" id="cmpChart"></div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+/* ── Height unit converter ──────────────────────────────── */
+(function () {
+  const btnCm   = document.getElementById('btnCm');
+  const btnFt   = document.getElementById('btnFt');
+  const cmWrap  = document.getElementById('cmInputWrap');
+  const ftPanel = document.getElementById('ftInPanel');
+  const cmInput = document.getElementById('height_cm');
+  const ftInput = document.getElementById('height_ft');
+  const inInput = document.getElementById('height_in');
+  const hint    = document.getElementById('heightConvertHint');
+  let   mode    = 'cm';
+
+  function cmToFtIn(cm) {
+    const totalIn = cm / 2.54;
+    const ft = Math.floor(totalIn / 12);
+    const inches = Math.round((totalIn % 12) * 2) / 2;
+    return { ft, inches };
+  }
+  function ftInToCm(ft, inches) {
+    return Math.round(((ft * 12) + inches) * 2.54 * 10) / 10;
+  }
+  function updateHint() {
+    if (mode === 'cm' && cmInput.value) {
+      const { ft, inches } = cmToFtIn(parseFloat(cmInput.value));
+      hint.textContent = `≈ ${ft} ft ${inches} in`;
+    } else if (mode === 'ft' && (ftInput.value || inInput.value)) {
+      const cm = ftInToCm(parseFloat(ftInput.value) || 0, parseFloat(inInput.value) || 0);
+      hint.textContent = `≈ ${cm} cm`;
+    } else {
+      hint.textContent = '';
+    }
+  }
+
+  function switchToCm() {
+    mode = 'cm';
+    btnCm.classList.add('unit-btn-active');
+    btnFt.classList.remove('unit-btn-active');
+    cmWrap.hidden  = false;
+    ftPanel.hidden = true;
+    if (ftInput.value || inInput.value) {
+      const cm = ftInToCm(parseFloat(ftInput.value) || 0, parseFloat(inInput.value) || 0);
+      cmInput.value = cm;
+      cmInput.dispatchEvent(new Event('input'));
+    }
+    updateHint();
+  }
+  function switchToFt() {
+    mode = 'ft';
+    btnFt.classList.add('unit-btn-active');
+    btnCm.classList.remove('unit-btn-active');
+    cmWrap.hidden  = true;
+    ftPanel.hidden = false;
+    if (cmInput.value) {
+      const { ft, inches } = cmToFtIn(parseFloat(cmInput.value));
+      ftInput.value = ft;
+      inInput.value = inches;
+    }
+    updateHint();
+  }
+
+  btnCm.addEventListener('click', switchToCm);
+  btnFt.addEventListener('click', switchToFt);
+
+  /* sync ft/in → cm for BMI calculations */
+  function syncFtToCm() {
+    const cm = ftInToCm(parseFloat(ftInput.value) || 0, parseFloat(inInput.value) || 0);
+    if (cm >= 100 && cm <= 250) {
+      cmInput.value = cm;
+      cmInput.dispatchEvent(new Event('input'));
+    }
+    updateHint();
+  }
+  ftInput.addEventListener('input', syncFtToCm);
+  inInput.addEventListener('input', syncFtToCm);
+  cmInput.addEventListener('input', updateHint);
+})();
+
+/* ── Gender logic: male → lock pregnancies to 0 ────────── */
+(function () {
+  const radios  = document.querySelectorAll('input[name="gender"]');
+  const pregField  = document.getElementById('pregnancyField');
+  const pregInput  = document.getElementById('pregnancies');
+  const pregHint   = document.getElementById('pregnancyHint');
+  const maleNotice = document.getElementById('maleNotice');
+
+  function applyGender(val) {
+    if (val === 'male') {
+      pregInput.value    = 0;
+      pregInput.disabled = true;
+      pregInput.setAttribute('aria-disabled', 'true');
+      pregField.classList.add('field-disabled');
+      maleNotice.hidden  = false;
+      pregHint.textContent = 'Not applicable for male patients (set to 0).';
+    } else {
+      pregInput.disabled = false;
+      pregInput.removeAttribute('aria-disabled');
+      pregField.classList.remove('field-disabled');
+      maleNotice.hidden  = true;
+      pregHint.textContent = 'Enter 0 if this doesn\'t apply.';
+    }
+  }
+
+  radios.forEach(r => r.addEventListener('change', () => applyGender(r.value)));
+  // set initial state
+  const checked = document.querySelector('input[name="gender"]:checked');
+  if (checked) applyGender(checked.value);
+})();
+
+/* ── Info banner dismiss ────────────────────────────────── */
+(function () {
+  const btn    = document.getElementById('infoBannerClose');
+  const banner = document.getElementById('infoBanner');
+  if (!btn || !banner) return;
+  btn.addEventListener('click', () => {
+    banner.classList.add('banner-hiding');
+    setTimeout(() => banner.remove(), 400);
+  });
+})();
+</script>
+{% endblock %}

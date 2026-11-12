@@ -1,0 +1,24 @@
+<aside class="auth-aside" aria-hidden="false">
+  <a class="brand" href="{{ url_for('auth.login') }}">
+    <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M6 21a10 10 0 0 1 20 0" fill="none" stroke="#5FD8AA" stroke-width="3" stroke-linecap="round"/><circle cx="21" cy="13" r="2.2" fill="#15262B"/></svg>
+    <span>Diabetes Risk Check</span>
+  </a>
+
+  <div class="aside-body">
+    <svg class="trace" viewBox="0 0 480 190" role="img" aria-label="A blood glucose reading rising and falling across a day">
+      <line x1="0" y1="118" x2="480" y2="118" class="trace-ref"/>
+      <text x="480" y="136" text-anchor="end" class="trace-label">Healthy range</text>
+      <path class="trace-line" pathLength="1" d="M0 138 C36 132 52 96 92 104 S150 158 196 128 S256 58 300 78 S356 128 400 92 S452 48 480 58"/>
+      <circle class="trace-dot" cx="480" cy="58" r="6"/>
+    </svg>
+
+    <h2>Know where you stand, and how it changes.</h2>
+    <ul class="aside-list">
+      <li>A risk score with the reasons behind it</li>
+      <li>Every check saved, with a chart of your progress</li>
+      <li>A PDF report you can take to your doctor</li>
+    </ul>
+  </div>
+
+  <p class="aside-note">For learning and self-checks. It does not diagnose diabetes.</p>
+</aside>

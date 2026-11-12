@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Cloud Deployment Hub · Diabetes Risk Check{% endblock %}
+
+{% block content %}
+<div class="wrap">
+  <div class="page-head">
+    <h1>Deploy to the cloud</h1>
+    <p class="lede">Launch your own live instance of Diabetes Risk Check so patients and clinicians can access it from
+      anywhere on any phone, tablet, or browser.</p>
+  </div>
+
+  <div class="deploy-grid">
+    <!-- Render -->
+    <div class="deploy-card">
+      <div class="deploy-card-head">
+        <div class="deploy-platform">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="4" />
+            <path d="M7 17l5-5 5 5M12 12V3" />
+          </svg>
+          Render.com
+        </div>
+        <span class="deploy-badge deploy-badge-free">Free Tier</span>
+      </div>
+      <p class="deploy-desc">Deploy in 1-click via the included <code>render.yaml</code> blueprint. Supports
+        auto-training and persistent storage.</p>
+      <div class="deploy-snippet">
+        git push origin main<br>
+        # Link repo in render.com dashboard
+      </div>
+      <div class="deploy-actions">
+        <a class="btn btn-primary" href="https://render.com/deploy" target="_blank" rel="noopener">Deploy on Render
+          &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Railway -->
+    <div class="deploy-card">
+      <div class="deploy-card-head">
+        <div class="deploy-platform">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+          </svg>
+          Railway
+        </div>
+        <span class="deploy-badge deploy-badge-free">Instant</span>
+      </div>
+      <p class="deploy-desc">Fast zero-config deployment using Nixpacks or Dockerfile via <code>railway.json</code>.
+        Generates HTTPS URLs automatically.</p>
+      <div class="deploy-snippet">
+        npm i -g @railway/cli<br>
+        railway up
+      </div>
+      <div class="deploy-actions">
+        <a class="btn btn-secondary" href="https://railway.app/new" target="_blank" rel="noopener">Deploy on Railway
+          &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Fly.io -->
+    <div class="deploy-card">
+      <div class="deploy-card-head">
+        <div class="deploy-platform">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+          Fly.io
+        </div>
+        <span class="deploy-badge">Global CDN</span>
+      </div>
+      <p class="deploy-desc">Global container deployment with persistent NVMe SQLite storage mounted directly in your
+        region.</p>
+      <div class="deploy-snippet">
+        fly launch<br>
+        fly deploy
+      </div>
+      <div class="deploy-actions">
+        <a class="btn btn-secondary" href="https://fly.io/docs/hands-on/launch-app/" target="_blank"
+          rel="noopener">Fly.io Guide &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Docker VPS -->
+    <div class="deploy-card">
+      <div class="deploy-card-head">
+        <div class="deploy-platform">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+          Docker Compose
+        </div>
+        <span class="deploy-badge">Self-Hosted</span>
+      </div>
+      <p class="deploy-desc">Run on any Ubuntu, Debian, AWS EC2, or DigitalOcean droplet with preconfigured multi-stage
+        Docker build.</p>
+      <div class="deploy-snippet">
+        docker compose up -d --build
+      </div>
+      <div class="deploy-actions">
+        <button class="btn btn-secondary" type="button"
+          onclick="navigator.clipboard.writeText('docker compose up -d --build'); alert('Docker command copied!');">Copy
+          Command</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="section method deploy-env-section" aria-labelledby="h-env">
+    <h2 id="h-env">Production Environment Variables</h2>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Required</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>SECRET_KEY</code></td>
+            <td><strong>Yes</strong></td>
+            <td>Auto-generated in <code>instance/</code></td>
+            <td>Cryptographic key for signing session cookies. Generate with
+              <code>python -c "import secrets; print(secrets.token_hex(32))"</code>
+            </td>
+          </tr>
+          <tr>
+            <td><code>COOKIE_SECURE</code></td>
+            <td>Recommended</td>
+            <td><code>0</code></td>
+            <td>Set to <code>1</code> behind HTTPS (Render, Railway, Fly, Nginx).</td>
+          </tr>
+          <tr>
+            <td><code>DATABASE_PATH</code></td>
+            <td>Optional</td>
+            <td><code>instance/app.db</code></td>
+            <td>Path to SQLite database file. Mount on a persistent volume for persistence.</td>
+          </tr>
+          <tr>
+            <td><code>FLASK_DEBUG</code></td>
+            <td>No</td>
+            <td><code>0</code></td>
+            <td>Keep at <code>0</code> in production for security.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

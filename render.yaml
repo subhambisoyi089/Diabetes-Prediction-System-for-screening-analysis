@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: diabetes-risk-app
+    env: python
+    buildCommand: "pip install -r requirements.txt && python train_model.py"
+    startCommand: "gunicorn 'app:create_app()' --bind 0.0.0.0:$PORT --workers 2"
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: COOKIE_SECURE
+        value: "1"
+      - key: SECRET_KEY
+        generateValue: true
+    disk:
+      name: sqlite-data
+      mountPath: /data
+      sizeGB: 1
